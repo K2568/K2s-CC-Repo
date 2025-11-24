@@ -1,21 +1,18 @@
+local peripheralposition = "top"
 local monitor = peripheral.wrap("right")
 if not monitor then
     error("No monitor found on the right!")
 end
 
 local function displayMethods()
-    local periph = peripheral.wrap("top")
-    if not periph then
-        monitor.clear()
-        monitor.setCursorPos(1, 1)
+    monitor.clear()
+    monitor.setCursorPos(1, 1)
+    
+    local methods = peripheral.getMethods(peripheralposition)
+    if not methods then
         monitor.write("No peripheral")
         return
     end
-    
-    local methods = peripheral.getMethods("top")
-    
-    monitor.clear()
-    monitor.setCursorPos(1, 1)
     
     for i, method in ipairs(methods) do
         monitor.write(method)
@@ -29,11 +26,7 @@ displayMethods()
 while true do
     local event, side = os.pullEvent()
     
-    if event == "peripheral" and side == "top" then
+    if (event == "peripheral" or event == "peripheral_detach") and side == peripheralposition then
         displayMethods()
-    elseif event == "peripheral_detach" and side == "top" then
-        monitor.clear()
-        monitor.setCursorPos(1, 1)
-        monitor.write("No peripheral")
     end
 end
